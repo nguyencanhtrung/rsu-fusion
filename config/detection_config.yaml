@@ -1,0 +1,25 @@
+# Detection Configuration - Enhanced from Reference
+# Expanded from truck-only to all vehicle types
+
+detection:
+  model:
+    path: "data/models/yolov8m.pt"
+    device: "cuda"  # or "cpu" if no GPU
+    image_size: 640
+  
+  classes:
+    # COCO class IDs for vehicle types
+    car: 2
+    bus: 5      # Includes ambulances  
+    truck: 7
+    motorcycle: 3
+    
+  filtering:
+    confidence_threshold: 0.5
+    nms_threshold: 0.4
+    min_box_area: 100    # pixels²
+    max_box_area: 200000 # pixels²
+    
+  preprocessing:
+    normalize: true
+    resize_method: "letterbox"

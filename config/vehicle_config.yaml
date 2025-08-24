@@ -1,0 +1,34 @@
+# Vehicle Configuration - Reference Route Preservation
+# Use exact reference ambulance spawn and route
+
+vehicle:
+  spawn:
+    blueprint: "vehicle.ford.ambulance"
+    route_file: "vehicle.ford.ambulance.json"  # From reference
+    autopilot: true
+    respawn_on_completion: true
+    
+  control:
+    # Preserve exact reference PID parameters
+    steering_pid:
+      kp: 2.0
+      ki: 0.05
+      kd: 0.1
+      output_limit: 1.0
+      
+    speed_pid:
+      kp: 0.8
+      ki: 0.06  
+      kd: 0.1
+      output_limit: 1.0
+      
+    # Speed settings (from reference)
+    max_speed: 30.0           # km/h
+    turn_speed_reduction: 15.0 # km/h for sharp turns
+    reverse_threshold: 70.0    # degrees for auto-reverse
+    
+  physics:
+    # Optional physics overrides
+    mass: 1500.0              # kg
+    drag_coefficient: 0.3
+    wheel_friction: 3.0

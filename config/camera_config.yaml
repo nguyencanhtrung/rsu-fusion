@@ -1,0 +1,35 @@
+# Camera Configuration - Exact Reference Match Required
+# Position: Traffic light pole at intersection
+# CRITICAL: Must match reference design exactly
+
+camera:
+  transform:
+    # Exact reference position - validation required at runtime
+    location:
+      x: 0.0
+      y: 15.0 
+      z: 5.0
+    rotation:
+      pitch: -10.0
+      yaw: 180.0
+      roll: 0.0
+  
+  attributes:
+    rgb:
+      image_size_x: 960
+      image_size_y: 540
+      fov: 40.0
+      sensor_tick: 0.1  # 10Hz update rate
+    depth:
+      image_size_x: 960
+      image_size_y: 540
+      fov: 40.0
+      sensor_tick: 0.1
+
+# Debug validation settings
+validation:
+  strict_mode: false  # Just log warnings for now
+  tolerance:
+    position: 0.01   # meters
+    rotation: 0.1    # degrees
+  log_parameters: true

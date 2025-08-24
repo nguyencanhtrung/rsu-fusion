@@ -1,13 +1,33 @@
-### **One-Week Implementation Sprint: RSU Digital Twin**
+# RSU Digital Twin - Implementation Sprint
 
-**Prerequisites & Setup (To be done before Day 1):**
+> **A comprehensive one-week implementation of RSU (Road Side Unit) digital twin for C-V2X infrastructure**
 
-  * **Environment:** Set up a Python environment (e.g., Anaconda or venv) with Python 3.10+.[1]
-  * **Core Libraries:** Install PyTorch, TensorFlow (if needed by specific models), OpenCV, and NumPy.
-  * **CARLA Simulator:** Ensure your CARLA environment is running and you can generate video streams from multiple camera angles of an intersection.
-  * **IDE:** Have your preferred IDE (e.g., VS Code, PyCharm) ready.
+## Quick Start
 
------
+```bash
+# 1. Setup environment and dependencies
+./quick_setup.sh
+
+# 2. Start CARLA simulator
+./start-carla.sh
+
+# 3. Run Phase 1 demo (recommended for beginners)
+./run_demo.sh phase1_batch
+
+# 4. View results in data/outputs/
+```
+## Implementation Roadmap
+
+### **Prerequisites & Setup**
+
+  * **Environment:** Python 3.10+ with conda/venv
+  * **Core Libraries:** PyTorch, OpenCV, NumPy, filterpy, ultralytics
+  * **CARLA Simulator:** CARLA 0.9.15 with Docker/GPU support
+  * **IDE:** VS Code recommended with Python extensions
+
+**🚀 Run `./quick_setup.sh` to install everything automatically**
+
+---
 
 ### **Day 1–2: Phase 1 - Single-Camera 2D Tracking (SORT)**
 

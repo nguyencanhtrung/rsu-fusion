@@ -1,0 +1,37 @@
+# Tracking Configuration - 2D Pixel Coordinates SORT
+# Phase 1: Simplified 2D tracking in pixel space
+
+tracking:
+  kalman_filter:
+    # State vector: [u, v, area, aspect_ratio, du, dv, da, dar]
+    state_dim: 8
+    measurement_dim: 4  # [u, v, area, aspect_ratio]
+    
+    # Process noise (higher = more responsive to changes)
+    process_noise: 0.1
+    
+    # Measurement noise (higher = trust measurements less)  
+    measurement_noise: 1.0
+    
+    # Initial uncertainty
+    initial_uncertainty: 10.0
+    
+  sort:
+    # Track management parameters
+    max_age: 30          # frames before track deletion
+    min_hits: 3          # detections before track confirmation
+    iou_threshold: 0.3   # assignment threshold
+    
+    # Assignment algorithm
+    use_hungarian: true
+    cost_threshold: 0.8  # maximum assignment cost
+    
+  track_management:
+    max_tracks: 50
+    track_colors: 
+      - [255, 0, 0]    # Red
+      - [0, 255, 0]    # Green  
+      - [0, 0, 255]    # Blue
+      - [255, 255, 0]  # Yellow
+      - [255, 0, 255]  # Magenta
+      - [0, 255, 255]  # Cyan
