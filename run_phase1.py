@@ -31,7 +31,8 @@ class Phase1System:
         
         # Multi-process communication
         self.manager = multiprocessing.Manager()
-        self.image_queue = multiprocessing.Queue(maxsize=5)
+        self.detection_image_queue = multiprocessing.Queue(maxsize=5)
+        self.visualization_image_queue = multiprocessing.Queue(maxsize=5)
         self.detection_queue = multiprocessing.Queue(maxsize=10)
         self.tracking_queue = multiprocessing.Queue(maxsize=10)
         self.stats_dict = self.manager.dict()
@@ -111,13 +112,22 @@ class Phase1System:
                 # Start camera listening
                 def image_callback(image):
                     try:
-                        # Always keep the latest image - drop old frames if queue is full
-                        while self.image_queue.full():
+                        # Send image to BOTH detection and visualization queues
+                        # Detection queue
+                        while self.detection_image_queue.full():
                             try:
-                                self.image_queue.get_nowait()  # Remove old frame
+                                self.detection_image_queue.get_nowait()  # Remove old frame
                             except queue.Empty:
                                 break
-                        self.image_queue.put_nowait(image)
+                        self.detection_image_queue.put_nowait(image)
+                        
+                        # Visualization queue
+                        while self.visualization_image_queue.full():
+                            try:
+                                self.visualization_image_queue.get_nowait()  # Remove old frame
+                            except queue.Empty:
+                                break
+                        self.visualization_image_queue.put_nowait(image)
                     except:
                         pass  # Queue might be closed during shutdown
                 
@@ -165,8 +175,8 @@ class Phase1System:
                 
                 while self.running:
                     try:
-                        # Get image from queue
-                        image = self.image_queue.get(timeout=1.0)
+                        # Get image from detection queue
+                        image = self.detection_image_queue.get(timeout=1.0)
                         
                         # Run detection
                         detections = detector.detect(image)
@@ -294,12 +304,12 @@ class Phase1System:
                 
                 while self.running:
                     try:
-                        # Get latest image (consume all available to get the most recent)
+                        # Get latest image from visualization queue (consume all available to get the most recent)
                         latest_image = None
                         image_count = 0
                         while True:
                             try:
-                                latest_image = self.image_queue.get_nowait()
+                                latest_image = self.visualization_image_queue.get_nowait()
                                 image_count += 1
                                 if image_count > 5:  # Prevent consuming too many at once
                                     break
@@ -398,7 +408,8 @@ class Phase1System:
                 self.logger.info(f"Visualization: {stats.get('avg_fps', 0):.1f} FPS")
         
         # Queue status
-        self.logger.info(f"Queue sizes - Images: {self.image_queue.qsize()}, "
+        self.logger.info(f"Queue sizes - Detection Images: {self.detection_image_queue.qsize()}, "
+                        f"Visualization Images: {self.visualization_image_queue.qsize()}, "
                         f"Detections: {self.detection_queue.qsize()}, "
                         f"Tracking: {self.tracking_queue.qsize()}")
     
@@ -421,8 +432,10 @@ class Phase1System:
         
         # Clean up queues
         try:
-            while not self.image_queue.empty():
-                self.image_queue.get_nowait()
+            while not self.detection_image_queue.empty():
+                self.detection_image_queue.get_nowait()
+            while not self.visualization_image_queue.empty():
+                self.visualization_image_queue.get_nowait()
             while not self.detection_queue.empty():
                 self.detection_queue.get_nowait()
             while not self.tracking_queue.empty():

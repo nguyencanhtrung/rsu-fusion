@@ -171,7 +171,7 @@ class CameraManager:
             with self.image_lock:
                 self.current_image = image_rgb
             
-            # Call external callback if provided
+            # CRITICAL FIX: Call the callback to send image to queue
             if self.image_callback:
                 self.image_callback(image_rgb)
                 

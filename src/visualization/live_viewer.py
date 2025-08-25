@@ -89,30 +89,36 @@ class LiveViewer:
     
     def render_frame(self) -> Optional[np.ndarray]:
         """Render current frame with overlays"""
+        # Copy data quickly while holding lock, then release it
         with self.display_lock:
             if self.current_image is None:
                 return None
             
-            # Start with base image
+            # Quickly copy all data we need
             frame = self.current_image.copy()
-            
-            # Draw tracking trails first (background layer)
-            self._draw_tracking_trails(frame)
-            
-            # Draw detection boxes
-            self._draw_detections(frame)
-            
-            # Draw tracking boxes (on top of detections)
-            self._draw_tracks(frame)
-            
-            # Draw performance info
-            self._draw_performance_info(frame)
-            
-            return frame
+            detections = self.current_detections.copy()
+            tracks = self.current_tracks.copy()
+        
+        # Now draw overlays WITHOUT holding the lock
+        # This allows new images/data to be updated while we draw
+        
+        # Draw tracking trails first (background layer)  
+        self._draw_tracking_trails(frame, tracks)
+        
+        # Draw detection boxes
+        self._draw_detections(frame, detections)
+        
+        # Draw tracking boxes (on top of detections)
+        self._draw_tracks(frame, tracks)
+        
+        # Draw performance info
+        self._draw_performance_info(frame)
+        
+        return frame
     
-    def _draw_detections(self, frame: np.ndarray):
+    def _draw_detections(self, frame: np.ndarray, detections: List[Dict[str, Any]]):
         """Draw detection bounding boxes"""
-        for detection in self.current_detections:
+        for detection in detections:
             try:
                 # Get detection info
                 bbox = detection.get('bbox', [])
@@ -148,9 +154,9 @@ class LiveViewer:
             except Exception as e:
                 self.logger.error(f"Error drawing detection: {e}")
     
-    def _draw_tracks(self, frame: np.ndarray):
+    def _draw_tracks(self, frame: np.ndarray, tracks: List[Dict[str, Any]]):
         """Draw tracking results"""
-        for track in self.current_tracks:
+        for track in tracks:
             try:
                 # Get track info
                 track_id = track.get('track_id', 0)
@@ -183,9 +189,9 @@ class LiveViewer:
             except Exception as e:
                 self.logger.error(f"Error drawing track: {e}")
     
-    def _draw_tracking_trails(self, frame: np.ndarray):
+    def _draw_tracking_trails(self, frame: np.ndarray, tracks: List[Dict[str, Any]]):
         """Draw tracking history trails"""
-        for track in self.current_tracks:
+        for track in tracks:
             try:
                 history = track.get('history', [])
                 
