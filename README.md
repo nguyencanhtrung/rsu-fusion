@@ -12,6 +12,8 @@
 ./start-carla.sh
 
 # 3. Run Phase 1 demo (recommended for beginners)
+
+conda activate rsu-fusion
 ./run_demo.sh phase1_batch
 
 # 4. View results in data/outputs/

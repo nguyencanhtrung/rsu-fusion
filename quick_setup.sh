@@ -1,11 +1,7 @@
 #!/bin/bash
-
-# RSU Fusion Quick Setup Script for Ubuntu 20.04 + NVIDIA 3060Ti
-# This script automates the basic setup process
-
 set -e  # Exit on any error
 
-echo " RSU Fusion Quick Setup for Ubuntu 20.04 + NVIDIA 3060Ti"
+echo " RSU Fusion Quick Setup for Ubuntu 20.04, 22.04 + NVIDIA"
 echo "============================================================"
 
 # Colors for output
@@ -29,11 +25,13 @@ print_error() {
 
 # Check if running on Ubuntu 20.04
 check_os() {
-    if [[ $(lsb_release -rs) != "20.04" ]]; then
-        print_error "This script is designed for Ubuntu 20.04 LTS"
+    local ubuntu_version
+    ubuntu_version=$(lsb_release -rs)
+    if [[ "$ubuntu_version" != "20.04" && "$ubuntu_version" != "22.04" ]]; then
+        print_error "This script is designed for Ubuntu 20.04 LTS or 22.04 LTS"
         exit 1
     fi
-    print_status "Ubuntu 20.04 LTS detected"
+    print_status "Ubuntu $ubuntu_version LTS detected"
 }
 
 # Check NVIDIA GPU

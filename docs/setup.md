@@ -17,7 +17,7 @@ This guide will help you set up the development environment for the RSU Digital 
    ```bash
    # Download and install Anaconda for Ubuntu 20.04
    wget https://repo.anaconda.com/archive/Anaconda3-2024.06-1-Linux-x86_64.sh
-   bash Anaconda3-2024.06-Linux-x86_64.sh
+   bash Anaconda3-2024.06-1-Linux-x86_64.sh
    
    # Restart terminal or run:
    source ~/.bashrc
